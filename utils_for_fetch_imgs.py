@@ -5,10 +5,8 @@ from urllib.parse import urlparse
 import requests
 
 
-def download_image_url(filename: str, url: str, params: dict = None, path: str = 'images'):
+def download_image(filename: str, url: str, params: dict = None, image_folder:str = None):
     """Загружаем картинку с url, принимает параметры если необходимо """
-    image_folder = os.path.join(path)
-    os.makedirs(image_folder, exist_ok=True)
     path_to_jpeg = os.path.join(image_folder, f'{filename}{expand_file(url)}')
     response = requests.get(url=url, params=params)
     response.raise_for_status()
@@ -32,7 +30,7 @@ def get_random_comics_num(url: str):
     return random_xkcd_num
 
 
-def fetch_img_url_comment_xkcd(url: str, path: str = 'images'):
+def fetch_img_url_comment_xkcd(url: str, image_folder: str = 'images'):
     """ Загружаем комикс со случайным номером и получаем комментарий автора к этому комиксу"""
     nums = get_random_comics_num(url)
     url_nums = f'https://xkcd.com/{nums}/info.0.json'
@@ -40,7 +38,7 @@ def fetch_img_url_comment_xkcd(url: str, path: str = 'images'):
     response.raise_for_status()
     xkcd_response = response.json()
     xkcd_comics_url = xkcd_response['img']
-    download_image_url('xkcd_comic', xkcd_comics_url, path=path)
+    download_image('xkcd_comic', xkcd_comics_url, image_folder=image_folder)
     comment = xkcd_response['alt']
     return comment
 
@@ -49,3 +47,5 @@ def delete_img(img_path: str):
     """Удаление файла"""
     if os.path.exists(img_path):
         os.remove(img_path)
+
+
